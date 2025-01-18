@@ -42,6 +42,7 @@ def game_over(player1_score, dealer_score):
         print("You lose 😭")
 
 def game_logic():
+    input("To start press enter...")
     player1 = {"name": player_name, "cards": []}
     dealer = {"name": "Dealer", "cards": []}
     for _ in range(2):
@@ -52,32 +53,36 @@ def game_logic():
     print(f"The Dealer got [{dealer["cards"][0]}, *]")
     print("-----------------------------------------------------------")
 
-    game_is_on = True
-    while game_is_on:
-
+    another_card = True
+    while another_card:
         if len(player1["cards"]) == 2 and score(player1) == 21:
             print(f"Blackjack, {player1["name"]} wins 😎")
-            game_is_on = False
+            break
         else:
-            while True:
-                if input("Do you want another card? (Y/N) ").lower() == "y":
-                    get_card(player1)
-                    show_card(player1)
+            if input("Do you want another card? (Y/N) ").lower() == "y":
+                get_card(player1)
+                #
+                if score(player1) > 21 and 11 in player1["cards"]:
+                    ace_value(player1["cards"])
                     if score(player1) > 21:
-                        ace_value(player1["cards"])
-                        if score(player1) > 21:
-                            print(f"{player1["name"]} you go over 21, you lose 😥 ")
-                            game_is_on = False
-
+                        print(f"{player1["name"]} you go over 21, you lose 😥 ")
+                        another_card = False
+                    else:
+                        pass
+                elif score(player1) > 21:
+                    print(f"{player1["name"]} you go over 21, you lose 😥 ")
+                    another_card = False
                 else:
-                    break
+                    show_card(player1)
+            else:
+                another_card = False
 
             while score(dealer) < 17:
                 get_card(dealer)
 
-            show_card(player1)
-            show_card(dealer)
-            game_over(score(player1), score(dealer))
+    show_card(player1)
+    show_card(dealer)
+    game_over(score(player1), score(dealer))
 
     if input("Do you want to play again? (Y/N) ").lower() == "y":
         game_logic()
